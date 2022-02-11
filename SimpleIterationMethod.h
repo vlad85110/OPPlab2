@@ -1,11 +1,32 @@
 #pragma once
 
-#include "Matrix.h"
+#include "SquareMatrix.h"
+#include "Vector.h"
 
-//using MatrixPtr = std::shared_ptr<Matrix>;
+bool terminationCriterion(SquareMatrix &matrixA, Vector &vectorB, Vector &vectorX);
 
-MatrixPtr Iteration(MatrixPtr &matrixA, MatrixPtr &vectorB, MatrixPtr &vectorX) {
-    double t, eps;
+Vector& Iteration(SquareMatrix &matrixA, Vector &vectorB, Vector &vectorX) {
+    double t = 0.01;
 
-    vectorX = vectorX - (*(*matrixA * vectorX) * t);
+    while (!terminationCriterion(matrixA, vectorB, vectorX)) {
+        vectorX = vectorX - (matrixA * vectorX - vectorB) * t;
+    }
+    return vectorX;
+}
+
+bool terminationCriterion(SquareMatrix &matrixA, Vector &vectorB, Vector &vectorX) {
+    static int cnt = 1;
+    static const double eps = 0.00005;
+
+    if (cnt == 1) {
+        cnt++;
+        return false;
+    }
+
+    if (((matrixA * vectorX - vectorB).measure() / vectorB.measure()) < eps) {
+        cnt++;
+        return true;
+    }
+
+    return false;
 }

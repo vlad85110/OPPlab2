@@ -3,4 +3,4 @@ project(OPPlab1)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(OPPlab1 main.cpp SquareMatrix.cpp SquareMatrix.h Vector.cpp Vector.h Matrix.cpp Matrix.h SimpleIterationMethod.h)
+add_executable(OPPlab1 main.cpp SquareMatrix.cpp SquareMatrix.h Vector.cpp Vector.h SimpleIterationMethod.h Scenarios.h)
