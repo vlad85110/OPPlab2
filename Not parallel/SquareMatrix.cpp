@@ -16,7 +16,7 @@ void SquareMatrix::init() {
     }
 }
 
-Vector SquareMatrix::operator*(Vector &vector) {
+Vector SquareMatrix::operator*(Vector &vector) const {
     Vector result(size, 0);
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
@@ -26,7 +26,7 @@ Vector SquareMatrix::operator*(Vector &vector) {
     return result;
 }
 
-void SquareMatrix::print() {
+[[maybe_unused]] void SquareMatrix::print() const {
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
             std::cout << data[size * i + j] << " ";
@@ -35,6 +35,6 @@ void SquareMatrix::print() {
     }
 }
 
-double SquareMatrix::operator[](int index){
+double SquareMatrix::operator[](const int index) const {
     return data[index];
 }
