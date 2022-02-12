@@ -1,12 +1,16 @@
 #include "SquareMatrix.h"
 #include <iostream>
 
+
+
 SquareMatrix::SquareMatrix(size_t size) : data(size * size){
     this->size = size;
 }
 
 void SquareMatrix::init() {
+    #pragma omp parallel for
     for (int i = 0; i < size; ++i) {
+        #pragma omp parallel for
         for (int j = 0; j < size; ++j) {
             if (i == j)
                 data[i * size + j] = 2;
@@ -18,7 +22,9 @@ void SquareMatrix::init() {
 
 Vector SquareMatrix::operator*(Vector &vector) const {
     Vector result(size, 0);
+    #pragma omp parallel for
     for (int i = 0; i < size; ++i) {
+        #pragma omp parallel for
         for (int j = 0; j < size; ++j) {
            result.data[i] += data[size * i + j] * vector[j];
         }

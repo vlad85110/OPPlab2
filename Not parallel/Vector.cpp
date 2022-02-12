@@ -21,6 +21,7 @@ void Vector::print() const {
 Vector Vector::operator*(double num) const {
     auto size = this->data.size();
     Vector result(size);
+    #pragma omp parallel for
     for (auto i = 0; i < size; ++i) {
         result.data[i] = (*this)[i] * num;
     }
@@ -45,6 +46,7 @@ double Vector::operator[](int index) const {
 Vector Vector::operator-(const Vector &vector) const {
     auto size = this->data.size();
     Vector result(this->data.size());
+    #pragma omp parallel for
     for (auto i = 0; i < size; ++i) {
         result.data[i] = this->data[i] - vector[i];
     }
@@ -52,6 +54,7 @@ Vector Vector::operator-(const Vector &vector) const {
 }
 
 void Vector::initWithSinus(double size) {
+    #pragma omp parallel for
     for (auto i = 0; i < data.size(); ++i) {
         data[i] = sin(2 * PI * i / size);
     }
