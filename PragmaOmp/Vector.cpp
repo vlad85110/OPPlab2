@@ -21,6 +21,7 @@ void Vector::print() const {
 Vector Vector::operator*(double num) const {
     auto size = this->data.size();
     Vector result(size);
+
     for (auto i = 0; i < size; ++i) {
         result.data[i] = (*this)[i] * num;
     }
@@ -63,6 +64,3 @@ double Vector::max() const {
 }
 
 Vector& Vector::operator=(const Vector& v) = default;
-
-
-

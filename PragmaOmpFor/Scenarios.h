@@ -26,10 +26,10 @@ namespace Scenarios {
             std::cout << "Expected Result: " << std::endl;
 
             expected.print();
-
+        }
             std::cout << "Error: " << std::endl;
             std::cout << (expected - result).max() << std::endl;
-        }
+
 
         std::cout << "------------------------" << std::endl;
     }
@@ -52,10 +52,10 @@ namespace Scenarios {
 
             std::cout << "Expected Result: " << std::endl;
             vectorU.print();
-
+        }
             std::cout << "Error: " << std::endl;
             std::cout << (vectorU - result).max() << std::endl;
-        }
+
 
         std::cout << "------------------------" << std::endl;
     }

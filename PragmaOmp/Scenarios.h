@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+
 namespace Scenarios {
 
     void givenSolution(int size) {
@@ -61,5 +62,4 @@ namespace Scenarios {
     }
 
     /*void heatDistribution() {}*/
-
 }

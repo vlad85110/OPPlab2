@@ -2,7 +2,6 @@
 #include <iostream>
 
 
-
 SquareMatrix::SquareMatrix(size_t size) : data(size * size){
     this->size = size;
 }

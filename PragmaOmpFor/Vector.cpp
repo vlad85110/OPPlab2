@@ -2,8 +2,10 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <omp.h>
 
 
+const int threads = omp_get_num_threads();
 static const double PI = 3.14159265358979323846;
 
 Vector::Vector(size_t size, double num) : data(size, num) {}
@@ -21,6 +23,8 @@ void Vector::print() const {
 Vector Vector::operator*(double num) const {
     auto size = this->data.size();
     Vector result(size);
+
+    #pragma omp parallel for schedule (static, CHUNK_SIZE)
     for (auto i = 0; i < size; ++i) {
         result.data[i] = (*this)[i] * num;
     }
@@ -28,9 +32,14 @@ Vector Vector::operator*(double num) const {
 }
 
 double Vector::measure() const {
+    auto size = this->data.size();
     double mes = 0;
-    for (auto & it: data)
-        mes += it * it;
+    #pragma omp parallel reduction (+:mes)
+    {
+    #pragma omp for schedule (static, CHUNK_SIZE)
+    for (auto i = 0; i < size; ++i)
+        mes += data[i] * data[i];
+    }
     return sqrt(mes);
 }
 
@@ -45,6 +54,8 @@ double Vector::operator[](int index) const {
 Vector Vector::operator-(const Vector &vector) const {
     auto size = this->data.size();
     Vector result(this->data.size());
+
+    #pragma omp parallel for schedule (static, CHUNK_SIZE)
     for (auto i = 0; i < size; ++i) {
         result.data[i] = this->data[i] - vector[i];
     }
@@ -52,6 +63,7 @@ Vector Vector::operator-(const Vector &vector) const {
 }
 
 void Vector::initWithSinus(double size) {
+    #pragma omp parallel for schedule (static, CHUNK_SIZE)
     for (auto i = 0; i < data.size(); ++i) {
         data[i] = sin(2 * PI * i / size);
     }
@@ -60,6 +72,10 @@ void Vector::initWithSinus(double size) {
 double Vector::max() const {
     return *std::max_element(data.begin(), data.end());
 
+}
+
+std::vector<double>& Vector::getVector() {
+    return data;
 }
 
 Vector& Vector::operator=(const Vector& v) = default;

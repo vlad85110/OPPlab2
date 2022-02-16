@@ -16,5 +16,3 @@ public:
     double operator[] (int index) const;
     [[maybe_unused]] void print() const;
 };
-
-

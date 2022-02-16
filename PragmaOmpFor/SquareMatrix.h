@@ -3,7 +3,6 @@
 #include <vector>
 #include "Vector.h"
 
-
 class SquareMatrix {
 private:
     std::vector<double> data;
