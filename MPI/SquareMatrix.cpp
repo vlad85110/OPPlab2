@@ -2,43 +2,69 @@
 #include <iostream>
 
 namespace Matrix {
-    _Matrix create(int size) {
-        return (_Matrix) calloc(size * size, sizeof(double));
+    _Matrix* create(int size) {
+        auto matrix = new _Matrix;
+        matrix->height = size;
+        matrix->weight = size;
+        matrix->matrix = (__Matrix) calloc(size * size, sizeof(double));
+        return matrix;
     }
 
-    _Matrix create(int size, int num) {
-        auto _new = new double [size];
+    _Matrix* create(int size, int num) {
+        auto matrix = new _Matrix;
+        matrix->height = size;
+        matrix->weight = size;
+        matrix->matrix = (__Matrix) calloc(size * size, sizeof(double));
+
         for (int i = 0; i < size * size; ++i) {
-            _new[i] = num;
+            matrix->matrix[i] = num;
         }
-        return _new;
+        return matrix;
     }
 
-    void init(_Matrix matrix, int size) {
+    _Matrix* create(int height, int weight, int num) {
+        auto matrix = new _Matrix;
+        matrix->height = height;
+        matrix->weight = weight;
+        matrix->matrix = (__Matrix) calloc(height * weight, sizeof(double));
+
+        for (int i = 0; i < height * weight; ++i) {
+            matrix->matrix[i] = num;
+        }
+        return matrix;
+    }
+
+    void init(_Matrix* matrix) {
+        auto size = matrix->weight;
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
                 if (i == j)
-                    matrix[i * size + j] = 2;
+                    matrix->matrix[i * size + j] = 2;
                 else
-                    matrix[i * size + j] = 1;
+                    matrix->matrix[i * size + j] = 1;
             }
         }
     }
 
-    _Vector multiply(_Matrix matrix, _Vector vector, int size) {
-        _Vector result = Vector::create(size);
+    _Vector* multiply(_Matrix* matrix, _Vector* vector) {
+        auto size = matrix->height;
+        auto result = Vector::create(size);
+
         for (int i = 0; i < size; ++i) {
-            for (int j = 0; j < size; ++j) {
-                result[i] += matrix[size * i + j] * vector[j];
+            for (int j = 0; j < matrix->weight; ++j) {
+                result->vector[i] += matrix->matrix[size * i + j] * vector->vector[j];
             }
         }
         return result;
     }
 
-    void print(_Matrix matrix, int size) {
-        for (int i = 0; i < size; ++i) {
-            for (int j = 0; j < size; ++j) {
-                std::cout << matrix[size * i + j] << " ";
+    void print(_Matrix* matrix) {
+        auto height = matrix->height;
+        auto weight = matrix->weight;
+
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < weight; ++j) {
+                std::cout << matrix->matrix[weight * i + j] << " ";
             }
             std::cout << "\n";
         }
