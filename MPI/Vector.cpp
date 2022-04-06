@@ -44,16 +44,11 @@ namespace Vector {
 
         double mes = 0, s = 0;
 
-        /*for (auto i = rank * chunk, j = 0; j < chunk  && i < vector->size; ++i, ++j) {
-            s += vector->vector[i] * vector->vector[i];
-        }*/
-
         for (int i = 0; i < vector->size; ++i) {
             s += vector->vector[i] * vector->vector[i];
         }
 
         MPI_Reduce(&s, &mes, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-
         return sqrt(mes);
     }
 
@@ -68,8 +63,9 @@ namespace Vector {
     }
 
     void initWithSinus(_Vector* vector) {
+        double size = vector->size;
         for (auto i = 0; i < vector->size; ++i) {
-            vector->vector[i] = sin(2 * PI * i / (double)vector->size);
+            vector->vector[i] = sin(2 * PI * i / size);
         }
     }
 
@@ -81,5 +77,10 @@ namespace Vector {
         for (int i = 0; i < vector->size; ++i) {
             std::cout << vector->vector[i] << std::endl;
         }
+    }
+
+    void free (_Vector* vector) {
+        ::free(vector->vector);
+        ::free(vector);
     }
 }

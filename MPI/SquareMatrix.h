@@ -23,4 +23,6 @@ namespace Matrix {
     _Vector* multiply(_Matrix *matrix, _Vector* vector);
 
     [[maybe_unused]] void print(_Matrix* matrix);
+
+    void free(_Matrix* matrix);
 }

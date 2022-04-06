@@ -8,15 +8,10 @@ using std::endl;
 int main(int argc, char **argv) {
     MPI_Init(&argc, &argv);
 
-    int rank, size;
+    Scenarios::arbitraryDecision(600);
 
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    Scenarios::givenSolution(2200);
 
-    //if (rank == 0) {
-
-        //Scenarios::arbitraryDecision(600);
-    //}
-    Scenarios::givenSolution(3);
+    MPI_Finalize();
     return 0;
 }

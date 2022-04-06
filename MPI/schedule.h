@@ -46,6 +46,7 @@ namespace schedule {
                     height = len / weight;
                 }
 
+
                 MPI_Send(&height, 1, MPI_INT, i,125, MPI_COMM_WORLD);
                 MPI_Send(&len, 1, MPI_INT, i,124, MPI_COMM_WORLD);
                 MPI_Send(data, len, MPI_DOUBLE, i, 123, MPI_COMM_WORLD);
@@ -73,12 +74,16 @@ namespace schedule {
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
         int size;
+        int chunk;
         if (rank == 0) {
             size = vector->size;
+            chunk = get_chunk(size, mpi_size);
         }
         MPI_Bcast(&size, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-        int chunk = get_chunk(size, mpi_size);
+        MPI_Bcast(&chunk, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+
         double* data;
         if (rank == 0) {
             data = vector->vector;
@@ -121,9 +126,15 @@ namespace schedule {
         MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-       //todo self send
+        if (rank == 0) {
+            len = vector->size;
+            for (int i = 0; i < len; ++i) {
+                data[i] = vector->vector[i];
+            }
+            data+=len;
+        }
 
-        for (int i = 0; i < mpi_size; ++i) {
+        for (int i = 1; i < mpi_size; i++) {
             if (rank == i) {
                 len = vector->size;
                 MPI_Send(&len, 1, MPI_INT, 0, 123, MPI_COMM_WORLD);
@@ -135,6 +146,7 @@ namespace schedule {
                 MPI_Recv(data, len, MPI_DOUBLE, i, 124, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 data += len;
             }
+
         }
         MPI_Bcast(res->vector, size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 

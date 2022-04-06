@@ -70,4 +70,8 @@ namespace Matrix {
             std::cout << "\n";
         }
     }
+    void free (_Matrix* matrix) {
+        ::free(matrix->matrix);
+        ::free(matrix);
+    }
 }

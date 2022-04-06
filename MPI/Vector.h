@@ -20,5 +20,6 @@ namespace Vector {
     double measure(_Vector* vector, int chunk);
     double max_el(_Vector* vector);
     void print(_Vector* vector);
+    void free (_Vector* vector);
 }
 
