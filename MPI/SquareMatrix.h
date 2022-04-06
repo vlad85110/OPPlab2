@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Vector.h"
 
 using __Matrix = double*;

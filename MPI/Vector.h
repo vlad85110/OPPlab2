@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <mpi.h>
 
 using __Vector = double*;
@@ -11,7 +10,6 @@ struct vector {
     int size;
 };
 
-
 namespace Vector {
     _Vector* create(size_t size);
     _Vector* create(size_t size, double num);
@@ -19,7 +17,7 @@ namespace Vector {
     void initWithSinus(_Vector* vector);
     _Vector* multiply(_Vector* vector, double num);
     _Vector* minus(_Vector* vector1, _Vector* vector2);
-    double measure(_Vector* vector);
+    double measure(_Vector* vector, int chunk);
     double max_el(_Vector* vector);
     void print(_Vector* vector);
 }

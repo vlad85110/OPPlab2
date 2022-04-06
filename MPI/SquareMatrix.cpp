@@ -1,4 +1,5 @@
 #include "SquareMatrix.h"
+#include "Vector.h"
 #include <iostream>
 
 namespace Matrix {
@@ -52,7 +53,7 @@ namespace Matrix {
 
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < matrix->weight; ++j) {
-                result->vector[i] += matrix->matrix[size * i + j] * vector->vector[j];
+                result->vector[i] += matrix->matrix[matrix->weight * i + j] * vector->vector[j];
             }
         }
         return result;

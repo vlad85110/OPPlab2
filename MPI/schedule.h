@@ -1,7 +1,10 @@
 #pragma once
-#include "SquareMatrix.h"
+
 #include <iostream>
 #include <mpi.h>
+
+#include "SquareMatrix.h"
+#include "Vector.h"
 
 namespace schedule {
     int round_up(int x, int y) {
@@ -64,6 +67,52 @@ namespace schedule {
         return matrix;
     }
 
+    _Vector* send_vector(_Vector* vector) {
+        int rank, mpi_size;
+        MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+        int size;
+        if (rank == 0) {
+            size = vector->size;
+        }
+        MPI_Bcast(&size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+        int chunk = get_chunk(size, mpi_size);
+        double* data;
+        if (rank == 0) {
+            data = vector->vector;
+        }
+
+        int len = chunk;
+
+        for (int i = 1; i < mpi_size; ++i) {
+            data += chunk;
+
+            if (rank == 0) {
+                if (data + len > (vector->vector + vector->size)) {
+                    len = (vector->vector + vector->size) - data;
+                }
+
+                MPI_Send(&len, 1, MPI_INT, i,124, MPI_COMM_WORLD);
+                MPI_Send(data, len, MPI_DOUBLE, i, 123, MPI_COMM_WORLD);
+            }
+
+            if (rank == i) {
+                MPI_Recv(&len, 1, MPI_INT, 0, 124, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+                vector = Vector::create(len);
+                MPI_Recv(vector->vector, len, MPI_DOUBLE, 0, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            }
+        }
+
+        if (rank == 0) {
+            vector->size = chunk;
+        }
+
+        return vector;
+    }
+
     _Vector* join_vector(_Vector* vector, int size) {
         int rank, mpi_size, len;
         auto res = Vector::create(size);
@@ -74,17 +123,17 @@ namespace schedule {
 
        //todo self send
 
-        for (int i = 1; i < mpi_size; ++i) {
-            if (rank == 0) {
-                MPI_Recv(&len, 1, MPI_INT, i, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-                MPI_Recv(data, len, MPI_DOUBLE, i, 124, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-                data += len;
-            }
-
+        for (int i = 0; i < mpi_size; ++i) {
             if (rank == i) {
                 len = vector->size;
                 MPI_Send(&len, 1, MPI_INT, 0, 123, MPI_COMM_WORLD);
                 MPI_Send(vector->vector, len, MPI_DOUBLE, 0, 124, MPI_COMM_WORLD);
+            }
+
+            if (rank == 0) {
+                MPI_Recv(&len, 1, MPI_INT, i, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                MPI_Recv(data, len, MPI_DOUBLE, i, 124, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+                data += len;
             }
         }
         MPI_Bcast(res->vector, size, MPI_DOUBLE, 0, MPI_COMM_WORLD);
@@ -92,4 +141,3 @@ namespace schedule {
         return res;
     }
 }
-

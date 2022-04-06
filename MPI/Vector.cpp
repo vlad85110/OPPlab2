@@ -1,6 +1,8 @@
 #include "Vector.h"
+
 #include <iostream>
 #include <cmath>
+
 #include <algorithm>
 
 static const double PI = 3.14159265358979323846;
@@ -34,15 +36,25 @@ namespace Vector {
         return _new;
     }
 
-    double measure(_Vector* vector) {
+    double measure(_Vector* vector, int chunk) {
+        int rank, size;
+
+        MPI_Comm_size(MPI_COMM_WORLD, &size);
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
         double mes = 0, s = 0;
 
-        for (auto i = 0; i < vector->size; ++i) {
+        /*for (auto i = rank * chunk, j = 0; j < chunk  && i < vector->size; ++i, ++j) {
+            s += vector->vector[i] * vector->vector[i];
+        }*/
+
+        for (int i = 0; i < vector->size; ++i) {
             s += vector->vector[i] * vector->vector[i];
         }
+
         MPI_Reduce(&s, &mes, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-        return sqrt(s);
+        return sqrt(mes);
     }
 
     _Vector* minus(_Vector* vector1, _Vector* vector2) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <omp.h>
+#include
 
 long long factorial(int num) {
     omp_set_num_threads(num);

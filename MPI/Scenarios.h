@@ -1,11 +1,7 @@
 #pragma once
 
-#include "SimpleIterationMethod.h"
-#include "SquareMatrix.h"
-#include "Vector.h"
-#include "schedule.h"
-
 #include <iostream>
+#include "SimpleIterationMethod.h"
 
 
 namespace Scenarios {
@@ -15,32 +11,38 @@ namespace Scenarios {
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
         _Matrix* matrix = nullptr;
+        _Vector* vectorB = nullptr;
         if (rank == 0) {
-            matrix = Matrix::create(11, 2);
+            matrix = Matrix::create(size, 2);
+            vectorB = Vector::create(size, size + 1);
             Matrix::init(matrix);
         }
         matrix = schedule::send_matrix(matrix);
-
+        vectorB = schedule::send_vector(vectorB);
+        //Vector::print(vectorB);
         _Vector* vectorX = Vector::create(size);
-        _Vector* vectorB = Vector::create(size, size + 1);
+
         _Vector* expected = Vector::create(size, 1);
 
-        std::cout << "*Given Solution scenario*" << std::endl;
+        //std::cout << "*Given Solution scenario*" << std::endl;
         _Vector* result = Iteration(matrix, vectorB, vectorX, 0.0009, 0.0000005, size);
 
-        if (size <= 5) {
-            std::cout << "Result vector: " << std::endl;
-            Vector::print(result);
+        if (rank == 0) {
 
-            std::cout << "Expected Result: " << std::endl;
+            if (size <= 5) {
+                std::cout << "Result vector: " << std::endl;
+                Vector::print(result);
 
-            Vector::print(expected);
+                std::cout << "Expected Result: " << std::endl;
 
-            std::cout << "Error: " << std::endl;
-            std::cout << Vector::max_el(Vector::minus(expected, result)) << std::endl;
+                Vector::print(expected);
+
+                std::cout << "Error: " << std::endl;
+                std::cout << Vector::max_el(Vector::minus(expected, result)) << std::endl;
+            }
+
+            std::cout << "------------------------" << std::endl;
         }
-
-        std::cout << "------------------------" << std::endl;
     }
 
     /*void arbitraryDecision(int size) {
